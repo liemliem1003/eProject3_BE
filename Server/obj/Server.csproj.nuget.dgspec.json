@@ -1,6 +1,7 @@
 {
   "format": 1,
   "restore": {
+<<<<<<< HEAD
     "D:\\APTECH\\THUC_HANH\\HK3\\7_Project\\Eproject\\Team\\eProject3_BE\\Server\\Server.csproj": {}
   },
   "projects": {
@@ -12,6 +13,19 @@
         "projectPath": "D:\\APTECH\\THUC_HANH\\HK3\\7_Project\\Eproject\\Team\\eProject3_BE\\Server\\Server.csproj",
         "packagesPath": "C:\\Users\\ANGLE\\.nuget\\packages\\",
         "outputPath": "D:\\APTECH\\THUC_HANH\\HK3\\7_Project\\Eproject\\Team\\eProject3_BE\\Server\\obj\\",
+=======
+    "D:\\APTECH\\THUC_HANH\\HK3\\7_Project\\Eproject\\Team\\eProject3_BE\\Project3\\Server\\Server.csproj": {}
+  },
+  "projects": {
+    "D:\\APTECH\\THUC_HANH\\HK3\\7_Project\\Eproject\\Team\\eProject3_BE\\Project3\\Server\\Server.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\APTECH\\THUC_HANH\\HK3\\7_Project\\Eproject\\Team\\eProject3_BE\\Project3\\Server\\Server.csproj",
+        "projectName": "Server",
+        "projectPath": "D:\\APTECH\\THUC_HANH\\HK3\\7_Project\\Eproject\\Team\\eProject3_BE\\Project3\\Server\\Server.csproj",
+        "packagesPath": "C:\\Users\\ANGLE\\.nuget\\packages\\",
+        "outputPath": "D:\\APTECH\\THUC_HANH\\HK3\\7_Project\\Eproject\\Team\\eProject3_BE\\Project3\\Server\\obj\\",
+>>>>>>> origin
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -58,10 +72,13 @@
               "target": "Package",
               "version": "[6.0.20, )"
             },
+<<<<<<< HEAD
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[6.0.15, )"
             },
+=======
+>>>>>>> origin
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.2.3, )"
