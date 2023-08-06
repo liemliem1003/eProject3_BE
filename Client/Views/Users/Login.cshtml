@@ -1,0 +1,24 @@
+﻿@model Client.Models.User
+@{
+    TempData["Title"] = "Login";
+}
+<div class="col-md-6">
+    <h2 style="text-align:center">Account Login</h2>
+    <br />
+    <h4 style="color:red;">@ViewBag.mess</h4>
+</div>
+<form asp-action="Login">
+    <div>
+        <label asp-for="Username" class="control-label"></label>
+        <input asp-for="Username" class="form-control" />
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="Password" class="control-label"></label>
+        <input asp-for="Password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Login" class="form-control" />
+    </div>
+</form>
