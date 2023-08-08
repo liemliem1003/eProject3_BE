@@ -24,7 +24,7 @@ namespace Server.Controllers
         //cac API thuc thi
 
         //login
-        [HttpGet("{Username}/{Password}")]
+        [HttpGet("login")]
         public async Task<User> Login(string Username, string Password)
         {
             var user = _context.Users.SingleOrDefault(em => em.Username.Equals(Username) && em.Password.Equals(Password));
