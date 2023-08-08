@@ -66,7 +66,7 @@ namespace Server.Controllers
         }
 
         //create
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ActionResult<Policy>> CreatePolicy(Policy policy)
         {
             _context.Policies.Add(policy);

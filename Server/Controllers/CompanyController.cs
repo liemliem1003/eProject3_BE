@@ -64,7 +64,7 @@ namespace Server.Controllers
         }
 
         //create
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ActionResult<Company>> CreateCompany(Company company)
         {
             _context.Companies.Add(company);
