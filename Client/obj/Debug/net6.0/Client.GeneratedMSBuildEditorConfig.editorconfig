@@ -9,61 +9,61 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Client
 build_property.RootNamespace = Client
-build_property.ProjectDir = D:\APTECH\THUC_HANH\HK3\7_Project\Eproject\Team\eProject3_BE\Client\
+build_property.ProjectDir = D:\T1.2010.E0\eProject3_BE\Client\
 build_property.RazorLangVersion = 6.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = D:\APTECH\THUC_HANH\HK3\7_Project\Eproject\Team\eProject3_BE\Client
+build_property.MSBuildProjectDirectory = D:\T1.2010.E0\eProject3_BE\Client
 build_property._RazorSourceGeneratorDebug = 
 
-[D:/APTECH/THUC_HANH/HK3/7_Project/Eproject/Team/eProject3_BE/Client/Views/Home/Index.cshtml]
+[D:/T1.2010.E0/eProject3_BE/Client/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/APTECH/THUC_HANH/HK3/7_Project/Eproject/Team/eProject3_BE/Client/Views/Home/Privacy.cshtml]
+[D:/T1.2010.E0/eProject3_BE/Client/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/APTECH/THUC_HANH/HK3/7_Project/Eproject/Team/eProject3_BE/Client/Views/Shared/Error.cshtml]
+[D:/T1.2010.E0/eProject3_BE/Client/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/APTECH/THUC_HANH/HK3/7_Project/Eproject/Team/eProject3_BE/Client/Views/Shared/_ValidationScriptsPartial.cshtml]
+[D:/T1.2010.E0/eProject3_BE/Client/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/APTECH/THUC_HANH/HK3/7_Project/Eproject/Team/eProject3_BE/Client/Views/Users/Create.cshtml]
+[D:/T1.2010.E0/eProject3_BE/Client/Views/Users/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/APTECH/THUC_HANH/HK3/7_Project/Eproject/Team/eProject3_BE/Client/Views/Users/Delete.cshtml]
+[D:/T1.2010.E0/eProject3_BE/Client/Views/Users/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/APTECH/THUC_HANH/HK3/7_Project/Eproject/Team/eProject3_BE/Client/Views/Users/Details.cshtml]
+[D:/T1.2010.E0/eProject3_BE/Client/Views/Users/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/APTECH/THUC_HANH/HK3/7_Project/Eproject/Team/eProject3_BE/Client/Views/Users/Edit.cshtml]
+[D:/T1.2010.E0/eProject3_BE/Client/Views/Users/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/APTECH/THUC_HANH/HK3/7_Project/Eproject/Team/eProject3_BE/Client/Views/Users/Index.cshtml]
+[D:/T1.2010.E0/eProject3_BE/Client/Views/Users/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/APTECH/THUC_HANH/HK3/7_Project/Eproject/Team/eProject3_BE/Client/Views/Users/Login.cshtml]
+[D:/T1.2010.E0/eProject3_BE/Client/Views/Users/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVXNlcnNcTG9naW4uY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/APTECH/THUC_HANH/HK3/7_Project/Eproject/Team/eProject3_BE/Client/Views/_ViewImports.cshtml]
+[D:/T1.2010.E0/eProject3_BE/Client/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/APTECH/THUC_HANH/HK3/7_Project/Eproject/Team/eProject3_BE/Client/Views/_ViewStart.cshtml]
+[D:/T1.2010.E0/eProject3_BE/Client/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/APTECH/THUC_HANH/HK3/7_Project/Eproject/Team/eProject3_BE/Client/Views/Shared/_Layout.cshtml]
+[D:/T1.2010.E0/eProject3_BE/Client/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-j41ub9gw8f
