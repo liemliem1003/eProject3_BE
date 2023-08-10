@@ -70,6 +70,46 @@ namespace Server.Controllers
             }
         }
 
+        //approve
+        [HttpPost("approve/{claimId}")]
+        public IActionResult ApproveClaim(int claimId)
+        {
+            // Get the claim from the database
+            var claim = _context.Claims.FirstOrDefault(c => c.ClaimId == claimId);
+
+            if (claim == null)
+            {
+                return NotFound("Claim not found");
+            }
+
+            if (claim.Status)
+            {
+                return BadRequest("Claim is already approved");
+            }
+
+            // Update the claim status to approved
+            claim.Status = true;
+
+            // Update the available amount on the associated policy on user
+            var policy = _context.PolicyOnUsers.FirstOrDefault(p => p.PolicyId == claim.PolicyId);
+
+            if (policy == null)
+            {
+                return NotFound("Policy not found");
+            }
+
+            if (policy.AvaibleAmount < claim.AppAmount)
+            {
+                return BadRequest("Insufficient available amount on the policy");
+            }
+
+            policy.AvaibleAmount -= claim.AppAmount;
+
+            _context.SaveChanges();
+
+            return Ok("Claim approved and policy updated");
+        }
+
         //delete
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteClaim(int id)

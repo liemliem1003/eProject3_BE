@@ -69,7 +69,7 @@ namespace Server.Controllers
 
         //create
         [HttpPost("create")]
-        public async Task<ActionResult<Company>> CreateCompany(Company company/*, IFormFile file*/)
+        public async Task<ActionResult<Company>> CreateCompany(Company company/*, [FromForm] IFormFile file*/)
         {
             //try
             //{
