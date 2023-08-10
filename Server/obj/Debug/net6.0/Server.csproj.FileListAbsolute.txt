@@ -496,3 +496,4 @@ D:\T1.2010.E0\eProject3_BE\Server\obj\Debug\net6.0\refint\Server.dll
 D:\T1.2010.E0\eProject3_BE\Server\obj\Debug\net6.0\Server.pdb
 D:\T1.2010.E0\eProject3_BE\Server\obj\Debug\net6.0\Server.genruntimeconfig.cache
 D:\T1.2010.E0\eProject3_BE\Server\obj\Debug\net6.0\ref\Server.dll
+D:\T1.2010.E0\eProject3_BE\Server\bin\Debug\net6.0\Server.staticwebassets.runtime.json

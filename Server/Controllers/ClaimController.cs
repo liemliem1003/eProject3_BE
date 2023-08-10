@@ -47,14 +47,44 @@ namespace Server.Controllers
 
         //Create
         [HttpPost("create")]
-        public async Task<ActionResult<Claim>> CreatePolicy(Claim claim)
+        public async Task<ActionResult<Claim>> CreateClaim(Claim claim)
         {
             _context.Claims.Add(claim);
             await _context.SaveChangesAsync();
             return CreatedAtAction("GetClaim", new { id = claim.ClaimId }, claim);
         }
 
-        //Update
+        //update
+        [HttpPut("update/{id}")]
+        public async Task<ActionResult<Claim>> UpdateClaim(Claim claim, int id)
+        {
+            if (id != claim.ClaimId)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                _context.Entry(claim).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+        }
 
+        //delete
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteClaim(int id)
+        {
+            var claim = await _context.Policies.FindAsync(id);
+            if (claim == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                _context.Policies.Remove(claim);
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+        }
     }
 }
