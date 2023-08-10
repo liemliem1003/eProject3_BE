@@ -82,7 +82,7 @@ namespace Server.Controllers
                 return NotFound("Claim not found");
             }
 
-            if (claim.Status)
+            if (claim.Status ?? false)
             {
                 return BadRequest("Claim is already approved");
             }
