@@ -11,6 +11,7 @@ using Server.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.ComponentModel.Design;
 
 namespace Server.Controllers
 {
@@ -67,23 +68,72 @@ namespace Server.Controllers
             }else return NotFound();
         }
 
-        //create
+        //save on database as code64
+        ////create
+        //[HttpPost("create")]
+        //public async Task<ActionResult<Company>> CreateCompany([FromBody] Company company)
+        //{
+        //    try
+        //    {
+        //        var cname = _context.Companies.SingleOrDefault(c => c.CompanyName.Equals(company.CompanyName));
+        //        if (cname == null)
+        //        {
+        //            // Convert base64 to byte array
+        //            byte[] logoBytes = Convert.FromBase64String(company.Logo);
+
+        //            // Generate a unique file name
+        //            string fileName = Guid.NewGuid().ToString() + ".png";
+        //            var filePath = Path.Combine("wwwroot/images", fileName);
+
+        //            // Save the image to the server
+        //            await using (var fileStream = new FileStream(filePath, FileMode.Create))
+        //            {
+        //                await fileStream.WriteAsync(logoBytes);
+        //            }
+
+        //            // Create a new company entity
+        //            var newCompany = new Company
+        //            {
+        //                CompanyName = company.CompanyName,
+        //                CompanyPhone = company.CompanyPhone,
+        //                Address = company.Address,
+        //                Logo = "images/" + fileName,
+        //                Url = company.Url
+        //            };
+
+        //            _context.Companies.Add(company);
+        //            await _context.SaveChangesAsync();
+        //            return CreatedAtAction("GetCompany", new { id = newCompany.CompanyId }, newCompany);
+        //        }
+        //        else
+        //        {
+        //            ModelState.AddModelError(string.Empty, "Company already exists.");
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        ModelState.AddModelError(string.Empty, e.Message);
+        //    }
+        //    return BadRequest(ModelState);
+        //}
+
+        //save on database as link to file
         [HttpPost("create")]
         public async Task<ActionResult<Company>> CreateCompany([FromBody] Company company)
         {
             try
             {
-                var cname = _context.Companies.SingleOrDefault(c => c.CompanyName.Equals(company.CompanyName));
+                var cname = await _context.Companies.SingleOrDefaultAsync(c => c.CompanyName.Equals(company.CompanyName));
                 if (cname == null)
                 {
-                    // Convert base64 to byte array
-                    byte[] logoBytes = Convert.FromBase64String(company.Logo);
+                    // Decode base64 image data
+                    var logoBytes = Convert.FromBase64String(company.Logo);
 
-                    // Generate a unique file name
-                    string fileName = Guid.NewGuid().ToString() + ".png";
+                    // Save the image file to the server
+                    //var fileExtension = Path.GetExtension(company.Logo);
+                    var fileName = Guid.NewGuid().ToString() + /*fileExtension*/ ".png";
                     var filePath = Path.Combine("wwwroot/images", fileName);
 
-                    // Save the image to the server
                     await using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
                         await fileStream.WriteAsync(logoBytes);
@@ -93,14 +143,15 @@ namespace Server.Controllers
                     var newCompany = new Company
                     {
                         CompanyName = company.CompanyName,
+                        Logo = "images/" + fileName, // Store the link to the image file
                         CompanyPhone = company.CompanyPhone,
-                        Address = company.Address,
-                        Logo = "images/" + fileName,
-                        Url = company.Url
+                        Url = company.Url,
+                        Address = company.Address
                     };
 
-                    _context.Companies.Add(company);
+                    _context.Companies.Add(newCompany);
                     await _context.SaveChangesAsync();
+
                     return CreatedAtAction("GetCompany", new { id = newCompany.CompanyId }, newCompany);
                 }
                 else
@@ -112,23 +163,69 @@ namespace Server.Controllers
             {
                 ModelState.AddModelError(string.Empty, e.Message);
             }
+
             return BadRequest(ModelState);
         }
 
+
         //update
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<Company>> UpdateCompany(Company company, int id)
+        public async Task<ActionResult<Company>> UpdateCompany(int id, [FromBody] Company ucompany)
         {
-            if (id != company.CompanyId)
+            try
             {
-                return BadRequest();
-            }
-            else
-            {
-                _context.Entry(company).State = EntityState.Modified;
+                var company = await _context.Companies.FindAsync(id);
+                if (company == null)
+                {
+                    return NotFound();
+                }
+
+                // Update properties from the viewModel
+                company.CompanyName = ucompany.CompanyName;
+                company.CompanyPhone = ucompany.CompanyPhone;
+                company.Url = ucompany.Url;
+                company.Address = ucompany.Address;
+
+                if (!string.IsNullOrEmpty(ucompany.Logo))
+                {
+                    // Convert base64 to byte array
+                    byte[] logoBytes = Convert.FromBase64String(ucompany.Logo);
+
+                    // Generate a unique file name
+                    string fileName = Guid.NewGuid().ToString() + ".png";
+                    var filePath = Path.Combine("wwwroot/images", fileName);
+
+                    // Save the new image to the server
+                    await using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await fileStream.WriteAsync(logoBytes);
+                    }
+
+                    // Update the logo path
+                    company.Logo = "images/" + fileName;
+                }
+
+                _context.Update(company);
                 await _context.SaveChangesAsync();
+
                 return NoContent();
             }
+            catch (Exception e)
+            {
+                ModelState.AddModelError(string.Empty, e.Message);
+            }
+
+            return BadRequest(ModelState);
+            //if (id != company.CompanyId)
+            //{
+            //    return BadRequest();
+            //}
+            //else
+            //{
+            //    _context.Entry(company).State = EntityState.Modified;
+            //    await _context.SaveChangesAsync();
+            //    return NoContent();
+            //}
         }
 
         //delete
