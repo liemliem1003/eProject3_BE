@@ -31,10 +31,46 @@ namespace Server.Controllers
         }
 
         //add
+        [HttpPost("create")]
+        public async Task<ActionResult<PolicyOnUser>> CreatePolicyOnUser(PolicyOnUser policyonuser)
+        {
+            _context.PolicyOnUsers.Add(policyonuser);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction("GetPolicyOnUsers", new { id = policyonuser.PolicyId }, policyonuser);
+        }
 
+        //update
+        [HttpPut("update/{id}")]
+        public async Task<ActionResult<PolicyOnUser>> UpdatePolicyOnUser(PolicyOnUser policyonuser, int id)
+        {
+            if (id != policyonuser.PolicyId)
+            {
+                return BadRequest();
+            }
+            else
+            {
+                _context.Entry(policyonuser).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+        }
 
         //delete
-
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePolicyOnUser(int id)
+        {
+            var policyonuser = await _context.PolicyOnUsers.FindAsync(id);
+            if (policyonuser == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                _context.PolicyOnUsers.Remove(policyonuser);
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+        }
 
     }
 }
