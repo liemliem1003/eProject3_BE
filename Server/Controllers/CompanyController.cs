@@ -167,46 +167,103 @@ namespace Server.Controllers
             return BadRequest(ModelState);
         }
 
+        private bool CompanyExists(int id)
+        {
+            return _context.Companies.Any(e => e.CompanyId == id);
+        }
+
 
         //update
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<Company>> UpdateCompany(int id, [FromBody] Company ucompany)
+        public async Task<ActionResult<Company>> UpdateCompany(int id, [FromBody] Company company)
         {
             try
             {
-                var company = await _context.Companies.FindAsync(id);
-                if (company == null)
+                if (id != company.CompanyId)
+                {
+                    return BadRequest();
+                }
+
+                var existingCompany = await _context.Companies.FindAsync(id);
+
+                if (existingCompany == null)
                 {
                     return NotFound();
                 }
 
-                // Update properties from the viewModel
-                company.CompanyName = ucompany.CompanyName;
-                company.CompanyPhone = ucompany.CompanyPhone;
-                company.Url = ucompany.Url;
-                company.Address = ucompany.Address;
+                // Check if the updated CompanyName already exists (excluding the current company being updated)
+                var companyNameExists = await _context.Companies
+                    .AnyAsync(c => c.CompanyName == company.CompanyName && c.CompanyId != id);
 
-                if (!string.IsNullOrEmpty(ucompany.Logo))
+                if (companyNameExists)
                 {
-                    // Convert base64 to byte array
-                    byte[] logoBytes = Convert.FromBase64String(ucompany.Logo);
+                    ModelState.AddModelError("CompanyName", "Company name already exists.");
+                    return BadRequest(ModelState);
+                }
 
-                    // Generate a unique file name
-                    string fileName = Guid.NewGuid().ToString() + ".png";
+                if (existingCompany.Logo != company.Logo)
+                {
+                    // If the logo has changed, decode base64 image data and save to server
+                    var logoBytes = Convert.FromBase64String(company.Logo);
+                    var fileName = Guid.NewGuid().ToString() + ".png"; // Generate a new unique filename
                     var filePath = Path.Combine("wwwroot/images", fileName);
 
-                    // Save the new image to the server
                     await using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
                         await fileStream.WriteAsync(logoBytes);
                     }
 
-                    // Update the logo path
-                    company.Logo = "images/" + fileName;
+                    // Update company details including the new logo link
+                    existingCompany.Logo = "images/" + fileName;
+                }
+                else
+                {
+                    // If the logo hasn't changed, keep the existing logo link
+                    company.Logo = existingCompany.Logo;
                 }
 
-                _context.Update(company);
-                await _context.SaveChangesAsync();
+                // Update properties from the viewModel
+                existingCompany.CompanyName = company.CompanyName;
+                existingCompany.CompanyPhone = company.CompanyPhone;
+                existingCompany.Address = company.Address;
+                existingCompany.Url = company.Url;
+                existingCompany.Status = company.Status;
+
+                //if (!string.IsNullOrEmpty(ucompany.Logo))
+                //{
+                //    // Convert base64 to byte array
+                //    byte[] logoBytes = Convert.FromBase64String(ucompany.Logo);
+
+                //    // Generate a unique file name
+                //    string fileName = Guid.NewGuid().ToString() + ".png";
+                //    var filePath = Path.Combine("wwwroot/images", fileName);
+
+                //    // Save the new image to the server
+                //    await using (var fileStream = new FileStream(filePath, FileMode.Create))
+                //    {
+                //        await fileStream.WriteAsync(logoBytes);
+                //    }
+
+                //    // Update the logo path
+                //    company.Logo = "images/" + fileName;
+                //}
+
+                _context.Update(existingCompany);
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CompanyExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
 
                 return NoContent();
             }

@@ -118,46 +118,72 @@ namespace Server.Controllers
             //return CreatedAtAction("GetEmployee", new { id = employee.UserId }, employee);
         }
 
+        private bool EmployeeExists(int id)
+        {
+            return _context.Users.Any(e => e.UserId == id);
+        }
+
         //update
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<User>> PostEmpployee(int id, [FromBody] User uemployee)
+        public async Task<ActionResult<User>> PostEmpployee(int id, [FromBody] User employee)
         {
             try
             {
-                var employee = await _context.Users.FindAsync(id);
-                if (employee == null)
+                if (id != employee.UserId)
+                {
+                    return BadRequest();
+                }
+
+                var existingEmployee = await _context.Users.FindAsync(id);
+                if (existingEmployee == null)
                 {
                     return NotFound();
                 }
 
-                // Update properties from the viewModel
-                employee.Name = uemployee.Name;
-                employee.Dob = uemployee.Dob;
-                employee.Email = uemployee.Email;
-                employee.Phone = uemployee.Phone;
-                employee.Address = uemployee.Address;
-
-                if (!string.IsNullOrEmpty(uemployee.Avatar))
+                if (existingEmployee.Avatar != employee.Avatar)
                 {
-                    // Convert base64 to byte array
-                    byte[] logoBytes = Convert.FromBase64String(uemployee.Avatar);
-
-                    // Generate a unique file name
-                    string fileName = Guid.NewGuid().ToString() + ".png";
+                    // If the logo has changed, decode base64 image data and save to server
+                    var logoBytes = Convert.FromBase64String(employee.Avatar);
+                    var fileName = Guid.NewGuid().ToString() + ".png"; // Generate a new unique filename
                     var filePath = Path.Combine("wwwroot/images", fileName);
 
-                    // Save the new image to the server
                     await using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
                         await fileStream.WriteAsync(logoBytes);
                     }
 
-                    // Update the logo path
-                    employee.Avatar = "images/" + fileName;
+                    // Update company details including the new logo link
+                    existingEmployee.Avatar = "images/" + fileName;
+                }
+                else
+                {
+                    // If the logo hasn't changed, keep the existing logo link
+                    employee.Avatar = existingEmployee.Avatar;
                 }
 
+                // Update properties from the viewModel
+                existingEmployee.Name = employee.Name;
+                existingEmployee.Dob = employee.Dob;
+                existingEmployee.Email = employee.Email;
+                existingEmployee.Phone = employee.Phone;
+                existingEmployee.Address = employee.Address;
+
                 _context.Update(employee);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!EmployeeExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
 
                 return NoContent();
             }
