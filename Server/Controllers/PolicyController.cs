@@ -66,13 +66,64 @@ namespace Server.Controllers
         }
 
         //create
+        //[HttpPost("create")]
+        //public async Task<ActionResult<Policy>> CreatePolicy(Policy policy)
+        //{
+        //    _context.Policies.Add(policy);
+        //    await _context.SaveChangesAsync();
+        //    return CreatedAtAction("GetPolicy", new { id = policy.PolicyId }, policy);
+        //}
         [HttpPost("create")]
-        public async Task<ActionResult<Policy>> CreatePolicy(Policy policy)
+        public async Task<ActionResult<Policy>> CreatePolicy([FromBody] Policy policy)
         {
-            _context.Policies.Add(policy);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction("GetPolicy", new { id = policy.PolicyId }, policy);
+            try
+            {
+                var pname = await _context.Policies.SingleOrDefaultAsync(c => c.PolicyName.Equals(policy.PolicyName));
+                if (pname == null)
+                {
+                    // Decode base64 image data
+                    var logoBytes = Convert.FromBase64String(policy.Banner);
+
+                    // Save the image file to the server
+                    //var fileExtension = Path.GetExtension(company.Logo);
+                    var fileName = Guid.NewGuid().ToString() + /*fileExtension*/ ".png";
+                    var filePath = Path.Combine("wwwroot/images", fileName);
+
+                    await using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await fileStream.WriteAsync(logoBytes);
+                    }
+
+                    // Create a new company entity
+                    var newPolicy = new Policy
+                    {
+                        PolicyId = policy.PolicyId,
+                        PolicyName = policy.PolicyName,
+                        Desciption = policy.Desciption,
+                        TotalAmount = policy.TotalAmount,
+                        Duration = policy.Duration,
+                        CompanyId = policy.CompanyId,
+                        Banner = "images/" + fileName, // Store the link to the image file
+                    };
+
+                    _context.Policies.Add(newPolicy);
+                    await _context.SaveChangesAsync();
+
+                    return CreatedAtAction("GetPolicy", new { id = newPolicy.PolicyId }, newPolicy);
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Policy already exists.");
+                }
+            }
+            catch (Exception e)
+            {
+                ModelState.AddModelError(string.Empty, e.Message);
+            }
+
+            return BadRequest(ModelState);
         }
+
 
         //update
         [HttpPut("update/{id}")]
