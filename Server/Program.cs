@@ -55,6 +55,7 @@ if (app.Environment.IsDevelopment())
     );
 }
 app.UseCors(MyAllowSpecificOrigins);
+app.UseStaticFiles();
 
 app.UseAuthorization();
 app.UseSession(); //khai báo có sử dụng Session
