@@ -186,7 +186,6 @@ namespace Server.Controllers
                     // Create a new company entity
                     var newPolicy = new Policy
                     {
-                        PolicyId = policy.PolicyId,
                         PolicyName = policy.PolicyName,
                         Desciption = policy.Desciption,
                         TotalAmount = policy.TotalAmount,

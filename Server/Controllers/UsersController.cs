@@ -50,20 +50,9 @@ namespace Server.Controllers
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-
-                // Generate JWT token
-                //var tokenDescriptor = new SecurityTokenDescriptor
-                //{
-                //    Subject = new ClaimsIdentity(claims),
-                //    Expires = DateTime.UtcNow.AddDays(1), // Set token expiration time
-                //    SigningCredentials = new SigningCredentials(
-                //    new SymmetricSecurityKey(Encoding.UTF8.GetBytes("V6jN0TlqcmfGZik6jnWymcVBURDzH18EAPmGQIrdHRg=")),
-                //    SecurityAlgorithms.HmacSha256Signature)
-                //};
-
                 var token = new JwtSecurityToken(
                     issuer: _configuration["JwtIssuer"],
-                    audience: _configuration["JwtIssuer"],
+                    audience: _configuration["JwtAudience"],
                     claims: claims,
                     expires: DateTime.Now.AddDays(1), // Token expiration time
                     signingCredentials: creds
@@ -92,7 +81,7 @@ namespace Server.Controllers
 
         //Get all
         [HttpGet]
-        //[Authorize]
+        //[Authorize(Roles = "admin")]
         public async Task<IEnumerable<User>> GetUsers()
         {
             return await _context.Users.ToListAsync();
