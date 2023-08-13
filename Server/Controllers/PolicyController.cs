@@ -292,7 +292,7 @@ namespace Server.Controllers
                     }
                 }
 
-                return NoContent();
+                return Ok(new { message = "Policy updated successfully." });
             }
             catch (Exception e)
             {
