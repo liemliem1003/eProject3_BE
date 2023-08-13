@@ -192,6 +192,7 @@ namespace Server.Controllers
                         Duration = policy.Duration,
                         CompanyId = policy.CompanyId,
                         Banner = "images/" + fileName, // Store the link to the image file
+                        Status = policy.Status,
                     };
 
                     _context.Policies.Add(newPolicy);

@@ -6,9 +6,30 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-
+using Microsoft.Extensions.Options;
+using Server.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["JwtIssuer"],
+            ValidAudience = builder.Configuration["JwtAudience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtKey"]))
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 // Add services to the container.
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -37,33 +58,17 @@ builder.Services.AddSwaggerGen(
     //    c.OperationFilter<FileUploadOperationFilter>();
     //}
 );
+builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOption>();
 builder.Services.AddDbContext<InsuranceContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("mycon")));
 builder.Services.AddDistributedMemoryCache(); //lưu trữ các phần tử dữ liệu trong bộ nhớ cache
 builder.Services.AddSession(); //có sử dụng biến session
 
+builder.Logging.AddConsole(options =>
+{
+    options.LogToStandardErrorThreshold = LogLevel.Trace; // Set log level threshold
+});
 
-
-//authentication
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.RequireHttpsMetadata = false;
-        options.SaveToken = true;
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["JwtIssuer"], 
-            ValidAudience = builder.Configuration["JwtAudience"], 
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtKey"])) 
-        };
-    });
-
-builder.Services.AddControllers();
-builder.Logging.AddConsole();
 
 builder.Services.AddLogging();
 var app = builder.Build();
