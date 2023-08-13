@@ -126,7 +126,7 @@ namespace Server.Controllers
             var response = new
             {
                 TotalCount = totalCount,
-                Companies = employees,
+                Employees = employees,
                 SortOrder = sortOrder
             };
 
