@@ -3,12 +3,12 @@ using Server.Models;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
-
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
-
 
 // Add services to the container.
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -41,25 +41,38 @@ builder.Services.AddDbContext<InsuranceContext>
     (options => options.UseSqlServer(builder.Configuration.GetConnectionString("mycon")));
 builder.Services.AddDistributedMemoryCache(); //lưu trữ các phần tử dữ liệu trong bộ nhớ cache
 builder.Services.AddSession(); //có sử dụng biến session
+
+
+
+//authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = "http://localhost:3000/api", 
+            ValidAudience = "Server", 
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ZWxzZXdpbmRvd3Rvd2VyZ2FtZWZyZWVrZXlwbGFudHN0cmlwbGVmdGF0dGVudGlvbmg=")) 
+        };
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(
-    //    c =>
-    //{
-    //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API V1");
-    //}
-    );
+    app.UseSwaggerUI();
 }
 app.UseCors(MyAllowSpecificOrigins);
 app.UseStaticFiles();
-
-app.UseAuthorization();
 app.UseSession(); //khai báo có sử dụng Session
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

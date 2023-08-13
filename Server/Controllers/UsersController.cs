@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Server.Models;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
@@ -15,6 +20,7 @@ namespace Server.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        
         private readonly InsuranceContext _context;
 
         public UsersController(InsuranceContext context)
@@ -26,18 +32,57 @@ namespace Server.Controllers
 
         //login
         [HttpGet("login")]
-        public async Task<User> Login(string Username, string Password)
+        public /*async Task<User>*/ IActionResult Login(string username, string password)
         {
-            var user = _context.Users.SingleOrDefault(em => em.Username.Equals(Username) && em.Password.Equals(Password));
+            var user = _context.Users.SingleOrDefault(em => em.Username.Equals(username) && em.Password.Equals(password));
             if (user != null)
             {
-                return user;
+                var roleClaim = new System.Security.Claims.Claim(ClaimTypes.Role, user.Role == 1 ? "admin" : "employee");
+                var otherClaims = new List<System.Security.Claims.Claim>
+                {
+                    new System.Security.Claims.Claim(ClaimTypes.Name, user.Username),
+                    // Other claims...
+                };
+
+                // Combine the role claim and other claims
+                var claims = new List<System.Security.Claims.Claim> { roleClaim };
+                claims.AddRange(otherClaims);
+
+                // Create a dictionary of claims
+                var claimsDictionary = claims.ToDictionary(c => c.Type, c => (object)c.Value);
+
+                // Generate JWT token
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(claims),
+                    Expires = DateTime.UtcNow.AddDays(1), // Set token expiration time
+                    SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes("V6jN0TlqcmfGZik6jnWymcVBURDzH18EAPmGQIrdHRg=")),
+                    SecurityAlgorithms.HmacSha256Signature)
+                };
+
+                // ...
+
+                // Return the JWT token in the response
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var tokenString = tokenHandler.WriteToken(token);
+
+                // Return the token as part of the response
+                return Ok(new { Token = tokenString });
+                
+                //return user;
             }
             else
             {
-                return null;
+                return Unauthorized(); // Invalid login credentials
+                //return null;
             }
         }
+
+
+
+
 
         //Get all
         [HttpGet]
