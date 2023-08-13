@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,10 +23,12 @@ namespace Server.Controllers
     {
         
         private readonly InsuranceContext _context;
+        private readonly IConfiguration _configuration;
 
-        public UsersController(InsuranceContext context)
+        public UsersController(InsuranceContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         //cac API thuc thi
@@ -37,36 +40,35 @@ namespace Server.Controllers
             var user = _context.Users.SingleOrDefault(em => em.Username.Equals(username) && em.Password.Equals(password));
             if (user != null)
             {
-                var roleClaim = new System.Security.Claims.Claim(ClaimTypes.Role, user.Role == 1 ? "admin" : "employee");
-                var otherClaims = new List<System.Security.Claims.Claim>
+                var claims = new[]
                 {
+                    new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                     new System.Security.Claims.Claim(ClaimTypes.Name, user.Username),
-                    // Other claims...
+                    new System.Security.Claims.Claim(ClaimTypes.Role, user.Role == 1 ? "admin" : "employee")
                 };
 
-                // Combine the role claim and other claims
-                var claims = new List<System.Security.Claims.Claim> { roleClaim };
-                claims.AddRange(otherClaims);
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
+                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-                // Create a dictionary of claims
-                var claimsDictionary = claims.ToDictionary(c => c.Type, c => (object)c.Value);
 
                 // Generate JWT token
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(claims),
-                    Expires = DateTime.UtcNow.AddDays(1), // Set token expiration time
-                    SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes("V6jN0TlqcmfGZik6jnWymcVBURDzH18EAPmGQIrdHRg=")),
-                    SecurityAlgorithms.HmacSha256Signature)
-                };
+                //var tokenDescriptor = new SecurityTokenDescriptor
+                //{
+                //    Subject = new ClaimsIdentity(claims),
+                //    Expires = DateTime.UtcNow.AddDays(1), // Set token expiration time
+                //    SigningCredentials = new SigningCredentials(
+                //    new SymmetricSecurityKey(Encoding.UTF8.GetBytes("V6jN0TlqcmfGZik6jnWymcVBURDzH18EAPmGQIrdHRg=")),
+                //    SecurityAlgorithms.HmacSha256Signature)
+                //};
 
-                // ...
-
-                // Return the JWT token in the response
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                var tokenString = tokenHandler.WriteToken(token);
+                var token = new JwtSecurityToken(
+                    issuer: _configuration["JwtIssuer"],
+                    audience: _configuration["JwtIssuer"],
+                    claims: claims,
+                    expires: DateTime.Now.AddDays(1), // Token expiration time
+                    signingCredentials: creds
+                );
+                var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
                 // Return the token as part of the response
                 return Ok(new { Token = tokenString });
@@ -80,12 +82,17 @@ namespace Server.Controllers
             }
         }
 
-
+        public class LoginRequest
+        {
+            public string Username { get; set; }
+            public string Password { get; set; }
+        }
 
 
 
         //Get all
         [HttpGet]
+        //[Authorize]
         public async Task<IEnumerable<User>> GetUsers()
         {
             return await _context.Users.ToListAsync();
@@ -230,7 +237,7 @@ namespace Server.Controllers
                     }
                 }
 
-                return NoContent();
+                return Ok(new { message = "Employee updated successfully." });
             }
             catch (Exception e)
             {

@@ -39,8 +39,12 @@ namespace Server.Controllers
         //}
 
         [HttpGet]
+        //[Authorize(Roles = "admin")]
+        //[Authorize]
         public async Task<IActionResult> GetCompanies(int limit, int page, string sortOrder = "asc")
         {
+            var token = HttpContext.Request.Headers["Authorization"];
+            Console.WriteLine("Received Token: " + token);
             // Calculate skip count based on page and limit
             int skip = (page - 1) * limit;
 
@@ -312,7 +316,7 @@ namespace Server.Controllers
                     }
                 }
 
-                return NoContent();
+                return Ok(new { message = "Company updated successfully." });
             }
             catch (Exception e)
             {

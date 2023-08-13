@@ -54,12 +54,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = "http://localhost:3000/api", 
-            ValidAudience = "Server", 
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ZWxzZXdpbmRvd3Rvd2VyZ2FtZWZyZWVrZXlwbGFudHN0cmlwbGVmdGF0dGVudGlvbmg=")) 
+            ValidIssuer = builder.Configuration["JwtIssuer"], 
+            ValidAudience = builder.Configuration["JwtAudience"], 
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtKey"])) 
         };
     });
 
+builder.Services.AddControllers();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -71,8 +72,9 @@ if (app.Environment.IsDevelopment())
 app.UseCors(MyAllowSpecificOrigins);
 app.UseStaticFiles();
 app.UseSession(); //khai báo có sử dụng Session
+app.UseHttpsRedirection();
 app.UseAuthentication();
-app.UseAuthorization();
+app.UseAuthorization(); 
 app.MapControllers();
 
 app.Run();
