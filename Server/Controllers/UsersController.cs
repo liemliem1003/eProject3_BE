@@ -24,11 +24,13 @@ namespace Server.Controllers
         
         private readonly InsuranceContext _context;
         private readonly IConfiguration _configuration;
+        
 
         public UsersController(InsuranceContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
+            
         }
 
         //cac API thuc thi
@@ -46,8 +48,14 @@ namespace Server.Controllers
                     new System.Security.Claims.Claim(ClaimTypes.Name, user.Username),
                     new System.Security.Claims.Claim(ClaimTypes.Role, user.Role == 1 ? "admin" : "employee")
                 };
+                //var claims = new[]
+                //{
+                //    new System.Security.Claims.Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", user.UserId.ToString()),
+                //    new System.Security.Claims.Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", user.Username),
+                //    new System.Security.Claims.Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", user.Role == 1 ? "admin" : "employee")
+                //};
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]/*"8F6495428DDA3DD55E33DD4A5A77375431D5EF01A6C2C32E4F1602AA08A7A291"*/));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                 var token = new JwtSecurityToken(
@@ -77,14 +85,52 @@ namespace Server.Controllers
             public string Password { get; set; }
         }
 
-
-
         //Get all
         [HttpGet]
         //[Authorize(Roles = "admin")]
-        public async Task<IEnumerable<User>> GetUsers()
+        //[Authorize]
+        public async Task<IActionResult> GetUsers(int limit, int page, string sortOrder = "asc")
         {
-            return await _context.Users.ToListAsync();
+            var token = HttpContext.Request.Headers["Authorization"];
+            Console.WriteLine("Received Token: " + token);
+            // Calculate skip count based on page and limit
+            int skip = (page - 1) * limit;
+
+            // Set the default sort direction if not provided
+            if (sortOrder != "asc" && sortOrder != "desc")
+            {
+                sortOrder = "asc";
+            }
+
+            // Query data using Skip() and Take() methods to implement paging
+            var employeesQuery = _context.Users.AsQueryable();
+
+            if (sortOrder == "asc")
+            {
+                employeesQuery = employeesQuery.OrderBy(c => c.Name);
+            }
+            else
+            {
+                employeesQuery = employeesQuery.OrderByDescending(c => c.Name);
+            }
+
+            var employees = await employeesQuery
+                .Skip(skip)
+                .Take(limit)
+                .ToListAsync();
+
+            // Get the total count of items in the database
+            int totalCount = await _context.Users.CountAsync();
+
+            // Create a response object containing the paginated data and total count
+            var response = new
+            {
+                TotalCount = totalCount,
+                Companies = employees,
+                SortOrder = sortOrder
+            };
+
+            return Ok(response);
         }
 
         //get one
@@ -135,7 +181,8 @@ namespace Server.Controllers
                         Phone = employee.Phone,
                         Address = employee.Address,
                         Avatar = "images/" + fileName, // Store the link to the image file
-                        Role = employee.Role
+                        Role = employee.Role,
+                        Status = employee.Status,
                     };
 
                     _context.Users.Add(newEmployee);
