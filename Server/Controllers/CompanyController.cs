@@ -12,10 +12,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.ComponentModel.Design;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace Server.Controllers
 {
     [Route("api/[controller]")]
+    //[Authorize]
     [ApiController]
     public class CompanyController : ControllerBase
     {
@@ -28,11 +31,13 @@ namespace Server.Controllers
         //Company API
 
         //Get all
+        //[Authorize(Roles = "admin")]
         //[HttpGet]
         //public async Task<IEnumerable<Company>> GetCompanies()
-        //{ 
+        //{
         //    return await _context.Companies.ToListAsync();
         //}
+
         [HttpGet]
         public async Task<IActionResult> GetCompanies(int limit, int page, string sortOrder = "asc")
         {
