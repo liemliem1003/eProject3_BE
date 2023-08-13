@@ -48,6 +48,8 @@ builder.Services.AddSession(); //có sử dụng biến session
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -61,6 +63,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddControllers();
+builder.Logging.AddConsole();
+
+builder.Services.AddLogging();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -73,8 +78,11 @@ app.UseCors(MyAllowSpecificOrigins);
 app.UseStaticFiles();
 app.UseSession(); //khai báo có sử dụng Session
 app.UseHttpsRedirection();
+
+
 app.UseAuthentication();
-app.UseAuthorization(); 
+app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();

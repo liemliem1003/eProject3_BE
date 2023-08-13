@@ -38,9 +38,7 @@ namespace Server.Models
             {
                 entity.ToTable("Claim");
 
-                entity.Property(e => e.ClaimId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("ClaimID");
+                entity.Property(e => e.ClaimId).HasColumnName("ClaimID");
 
                 entity.Property(e => e.AppAmount).HasColumnType("decimal(18, 2)");
 
@@ -110,9 +108,11 @@ namespace Server.Models
             {
                 entity.ToTable("Policy");
 
-                entity.Property(e => e.PolicyId)
-                    .ValueGeneratedNever()
-                    .HasColumnName("PolicyID");
+                //entity.Property(e => e.PolicyId)
+                //    .ValueGeneratedNever()
+                //    .HasColumnName("PolicyID");
+
+                entity.Property(e => e.PolicyId).HasColumnName("PolicyID");
 
                 entity.Property(e => e.Banner).IsUnicode(false);
 
