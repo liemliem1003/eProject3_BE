@@ -250,6 +250,7 @@ namespace Server.Controllers
                 }
 
                 // Update properties from the viewModel
+                existingEmployee.Password = employee.Password;
                 existingEmployee.Name = employee.Name;
                 existingEmployee.Dob = employee.Dob;
                 existingEmployee.Email = employee.Email;
@@ -282,16 +283,6 @@ namespace Server.Controllers
             }
 
             return BadRequest(ModelState);
-            //if (id != employee.UserId)
-            //{
-            //    return BadRequest();
-            //}
-            //else
-            //{
-            //    _context.Entry(employee).State = EntityState.Modified;
-            //    await _context.SaveChangesAsync();
-            //    return NoContent();
-            //}
         }
 
         //delete
