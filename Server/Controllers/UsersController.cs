@@ -255,8 +255,9 @@ namespace Server.Controllers
                 existingEmployee.Email = employee.Email;
                 existingEmployee.Phone = employee.Phone;
                 existingEmployee.Address = employee.Address;
+                existingEmployee.Status = employee.Status;
 
-                _context.Update(employee);
+                _context.Update(existingEmployee);
                 try
                 {
                     await _context.SaveChangesAsync();

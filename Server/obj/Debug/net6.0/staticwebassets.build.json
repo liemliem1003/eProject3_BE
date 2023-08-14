@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "jIJbQgLy4cYFvp8gea2UJtSH3mRo56N0WQNrtAUj4lQ=",
+  "Hash": "leBUa6iNxv9/6t4JTT9PZdYvDuvMMtumZbAaIf68ARo=",
   "Source": "Server",
   "BasePath": "_content/Server",
   "Mode": "Default",
@@ -238,6 +238,23 @@
       "OriginalItemSpec": "wwwroot\\images\\4e485951-c71b-4cee-935c-35b61d4e4f26.png"
     },
     {
+      "Identity": "D:\\T1.2010.E0\\eProject3_BE\\Server\\wwwroot\\images\\4feb5979-8955-4420-ac0e-be7203f3194c.png",
+      "SourceId": "Server",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\T1.2010.E0\\eProject3_BE\\Server\\wwwroot\\",
+      "BasePath": "_content/Server",
+      "RelativePath": "images/4feb5979-8955-4420-ac0e-be7203f3194c.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\4feb5979-8955-4420-ac0e-be7203f3194c.png"
+    },
+    {
       "Identity": "D:\\T1.2010.E0\\eProject3_BE\\Server\\wwwroot\\images\\59d4da39-313e-4851-875e-d783be9291ca.png",
       "SourceId": "Server",
       "SourceType": "Discovered",
@@ -389,6 +406,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\c29dcfed-8d8f-4c59-b9d2-0dcad629b111.png"
+    },
+    {
+      "Identity": "D:\\T1.2010.E0\\eProject3_BE\\Server\\wwwroot\\images\\c421cc75-3848-4452-b9e8-364ea648022e.png",
+      "SourceId": "Server",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\T1.2010.E0\\eProject3_BE\\Server\\wwwroot\\",
+      "BasePath": "_content/Server",
+      "RelativePath": "images/c421cc75-3848-4452-b9e8-364ea648022e.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\c421cc75-3848-4452-b9e8-364ea648022e.png"
     },
     {
       "Identity": "D:\\T1.2010.E0\\eProject3_BE\\Server\\wwwroot\\images\\d1714ed6-92d6-439e-8bb5-ecd8b6a4708c.png",
