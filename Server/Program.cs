@@ -11,6 +11,30 @@ using Server.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:4200").WithMethods("PUT", "DELETE", "GET", "POST").WithHeaders("Content-Type", "Authorization");
+                      });
+});
+
+
+builder.Services.AddDbContext<InsuranceContext>
+    (options => options.UseSqlServer(builder.Configuration.GetConnectionString("mycon")));
+builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOption>();
+builder.Services.AddDistributedMemoryCache(); //lưu trữ các phần tử dữ liệu trong bộ nhớ cache
+builder.Services.AddSession(); //có sử dụng biến session
+
+builder.Services.AddControllers(options =>
+{
+    options.ModelBinderProviders.Insert(0, new Base64FileModelBinderProvider());
+});
+
 //authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -29,24 +53,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddAuthorization();
 
-// Add services to the container.
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins("http://localhost:4200").WithMethods("PUT", "DELETE", "GET", "POST").WithHeaders("Content-Type", "Authorization");
-                      });
-});
-
-builder.Services.AddControllers(options =>
-{
-    options.ModelBinderProviders.Insert(0, new Base64FileModelBinderProvider());
-});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(
@@ -58,11 +65,7 @@ builder.Services.AddSwaggerGen(
     //    c.OperationFilter<FileUploadOperationFilter>();
     //}
 );
-builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOption>();
-builder.Services.AddDbContext<InsuranceContext>
-    (options => options.UseSqlServer(builder.Configuration.GetConnectionString("mycon")));
-builder.Services.AddDistributedMemoryCache(); //lưu trữ các phần tử dữ liệu trong bộ nhớ cache
-builder.Services.AddSession(); //có sử dụng biến session
+
 
 builder.Logging.AddConsole(options =>
 {
@@ -71,6 +74,8 @@ builder.Logging.AddConsole(options =>
 
 
 builder.Services.AddLogging();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -83,8 +88,7 @@ app.UseCors(MyAllowSpecificOrigins);
 app.UseStaticFiles();
 app.UseSession(); //khai báo có sử dụng Session
 app.UseHttpsRedirection();
-
-
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
