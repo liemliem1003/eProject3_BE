@@ -55,7 +55,7 @@ namespace Server.Controllers
                 //    new System.Security.Claims.Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", user.Role == 1 ? "admin" : "employee")
                 //};
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]/*"8F6495428DDA3DD55E33DD4A5A77375431D5EF01A6C2C32E4F1602AA08A7A291"*/));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                 var token = new JwtSecurityToken(
@@ -68,7 +68,13 @@ namespace Server.Controllers
                 var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
                 // Return the token as part of the response
-                return Ok(new { Token = tokenString });
+                return Ok(new { Token = tokenString,
+                    User = new { 
+                        user.UserId,
+                        user.Username,
+                        user.Role
+                    }
+                });
                 
                 //return user;
             }
