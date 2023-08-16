@@ -181,13 +181,6 @@ namespace Server.Controllers
         }
 
         //create
-        //[HttpPost("create")]
-        //public async Task<ActionResult<Policy>> CreatePolicy(Policy policy)
-        //{
-        //    _context.Policies.Add(policy);
-        //    await _context.SaveChangesAsync();
-        //    return CreatedAtAction("GetPolicy", new { id = policy.PolicyId }, policy);
-        //}
         [HttpPost("create")]
         public async Task<ActionResult<Policy>> CreatePolicy([FromBody] Policy policy)
         {
