@@ -91,7 +91,7 @@ namespace Server.Controllers
         //Get all
         [HttpGet]
         //[Authorize(Roles = "admin")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetUsers(int limit, int page, string sortOrder = "asc")
         {
             var token = HttpContext.Request.Headers["Authorization"];
