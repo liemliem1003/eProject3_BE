@@ -63,13 +63,13 @@ namespace Server.Controllers
                 .ToListAsync();
 
             // Get the total count of items in the database
-            int totalCount = await _context.Policies.CountAsync();
+            int totalCount = await _context.Claims.CountAsync();
 
             // Create a response object containing the paginated data and total count
             var response = new
             {
                 TotalCount = totalCount,
-                Policies = claims
+                Claims = claims
             };
 
             return Ok(response);
@@ -103,7 +103,7 @@ namespace Server.Controllers
 
         //approve
         [HttpPost("approve/{claimId}")]
-        public IActionResult ApproveClaim(int claimId)
+        public async Task<IActionResult> ApproveClaim(int claimId)
         {
             // Get the claim from the database
             var claim = _context.Claims.FirstOrDefault(c => c.ClaimId == claimId);
@@ -136,7 +136,7 @@ namespace Server.Controllers
 
             policy.AvaibleAmount -= claim.AppAmount;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return Ok("Claim approved and policy updated");
         }
