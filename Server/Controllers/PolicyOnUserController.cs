@@ -30,6 +30,34 @@ namespace Server.Controllers
             return await _context.PolicyOnUsers.ToListAsync();
         }
 
+        //get by userid
+        [HttpGet("getbyuserid/{id}")]
+        public async Task<ActionResult<Claim>> GetPolicyOnUsers(int id, int limit, int page)
+        {
+            // Calculate skip count based on page and limit
+            int skip = (page - 1) * limit;
+
+            // Query data using Skip() and Take() methods to implement paging
+            var policyonusersQuery = _context.PolicyOnUsers.AsQueryable();
+
+            var policies = await policyonusersQuery.Where(c => c.UserId.Equals(id))
+                .Skip(skip)
+                .Take(limit)
+                .ToListAsync();
+
+            // Get the total count of items in the database
+            int totalCount = await _context.PolicyOnUsers.CountAsync();
+
+            // Create a response object containing the paginated data and total count
+            var response = new
+            {
+                TotalCount = totalCount,
+                PoliciesOnUser = policies
+            };
+
+            return Ok(response);
+        }
+
         //add
         [HttpPost("create")]
         public async Task<ActionResult<PolicyOnUser>> CreatePolicyOnUser(PolicyOnUser policyonuser)
