@@ -41,7 +41,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.RequireHttpsMetadata = false;
         options.SaveToken = true;
-        options.TokenValidationParameters = new TokenValidationParameters
+        options.TokenValidationParameters = new TokenValidationParameters()
         {
             ValidateIssuer = true,
             ValidateAudience = true,
@@ -56,15 +56,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(
-    //c =>
-    //{
-    //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API", Version = "v1" });
-
-    //    // Configure file upload support for Swagger
-    //    c.OperationFilter<FileUploadOperationFilter>();
-    //}
-);
+builder.Services.AddSwaggerGen();
 
 
 builder.Logging.AddConsole(options =>
@@ -72,9 +64,7 @@ builder.Logging.AddConsole(options =>
     options.LogToStandardErrorThreshold = LogLevel.Trace; // Set log level threshold
 });
 
-
 builder.Services.AddLogging();
-
 
 var app = builder.Build();
 
@@ -88,10 +78,7 @@ app.UseCors(MyAllowSpecificOrigins);
 app.UseStaticFiles();
 app.UseSession(); //khai báo có sử dụng Session
 app.UseHttpsRedirection();
-app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

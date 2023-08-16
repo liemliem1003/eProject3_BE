@@ -36,7 +36,7 @@ namespace Server.Controllers
         {
             _context.PolicyOnUsers.Add(policyonuser);
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetPolicyOnUsers", new { id = policyonuser.PolicyId }, policyonuser);
+            return CreatedAtAction("GetPolicyOnUsers", new { id = policyonuser.Id }, policyonuser);
         }
 
         //update
