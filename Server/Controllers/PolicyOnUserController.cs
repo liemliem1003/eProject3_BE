@@ -30,6 +30,21 @@ namespace Server.Controllers
             return await _context.PolicyOnUsers.ToListAsync();
         }
 
+        //Get one
+        [HttpGet("{id}")]
+        public async Task<ActionResult<PolicyOnUser>> GetPolicyOnUser(int id)
+        {
+            var policyonuser = await _context.PolicyOnUsers.FindAsync(id);
+            if (policyonuser == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return policyonuser;
+            }
+        }
+
         //get by userid
         [HttpGet("getbyuserid/{id}")]
         public async Task<ActionResult<Claim>> GetPolicyOnUsers(int id, int limit, int page)
