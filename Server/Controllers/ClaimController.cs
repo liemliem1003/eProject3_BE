@@ -192,42 +192,51 @@ namespace Server.Controllers
 
         //approve
         [HttpPost("approve/{claimId}")]
-        public async Task<IActionResult> ApproveClaim(int claimId)
+        public IActionResult ApproveClaim(int claimId)
         {
-            // Get the claim from the database
-            var claim = _context.Claims.FirstOrDefault(c => c.ClaimId == claimId);
-
-            if (claim == null)
+            try
             {
-                return NotFound("Claim not found");
-            }
+                // Get the claim from the database
+                var claim = _context.Claims.FirstOrDefault(c => c.ClaimId == claimId);
 
-            if (claim.Status ?? false)
+                if (claim == null)
+                {
+                    return NotFound("Claim not found");
+                }
+
+                if (claim.Status ?? false)
+                {
+                    return BadRequest("Claim is already approved");
+                }
+
+                // Update the claim status to approved
+                claim.Status = true;
+
+                // Update the available amount on the associated policy on user
+                var policy = _context.PolicyOnUsers.FirstOrDefault(p => p.PolicyId == claim.PolicyId && p.UserId == claim.UserId);
+
+                if (policy == null)
+                {
+                    return NotFound("Policy not found");
+                }
+
+                if (policy.AvaibleAmount < claim.AppAmount)
+                {
+                    return BadRequest("Insufficient available amount on the policy");
+                }
+
+                policy.AvaibleAmount -= claim.AppAmount;
+                _context.Update(policy);
+                _context.SaveChanges();
+
+                return Ok("Claim approved and policy updated");
+                //return Ok(policy.AvaibleAmount);
+            }
+            catch (Exception ex) 
             {
-                return BadRequest("Claim is already approved");
+                return StatusCode(500, "An error occurred while processing the claim: " + ex.Message);
             }
-
-            // Update the claim status to approved
-            claim.Status = true;
-
-            // Update the available amount on the associated policy on user
-            var policy = _context.PolicyOnUsers.FirstOrDefault(p => p.PolicyId == claim.PolicyId);
-
-            if (policy == null)
-            {
-                return NotFound("Policy not found");
-            }
-
-            if (policy.AvaibleAmount < claim.AppAmount)
-            {
-                return BadRequest("Insufficient available amount on the policy");
-            }
-
-            policy.AvaibleAmount -= claim.AppAmount;
-
-            await _context.SaveChangesAsync();
-
-            return Ok("Claim approved and policy updated");
+            
         }
 
         //delete
