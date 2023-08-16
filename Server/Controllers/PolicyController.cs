@@ -134,6 +134,33 @@ namespace Server.Controllers
             }
         }
 
+        //get active
+        //get active
+        [HttpGet("getactive")]
+        public async Task<IActionResult> GetPoliciesByStatus(string sortOrder = "asc")
+        {
+            // Set the default sort direction if not provided
+            if (sortOrder != "asc" && sortOrder != "desc")
+            {
+                sortOrder = "asc";
+            }
+
+            var policiesQuery = _context.Policies.AsQueryable();
+
+            if (sortOrder == "asc")
+            {
+                policiesQuery = policiesQuery.OrderBy(c => c.PolicyName);
+            }
+            else
+            {
+                policiesQuery = policiesQuery.OrderByDescending(c => c.PolicyName);
+            }
+
+            var policies = await policiesQuery.Where(c => c.Status == true).ToListAsync();
+
+            return Ok(policies);
+        }
+
         //Search by name
         [HttpGet("search/{name}")]
         public async Task<ActionResult<IEnumerable<Policy>>> SearchPolicy(string name)

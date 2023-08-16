@@ -30,14 +30,7 @@ namespace Server.Controllers
 
         //Company API
 
-        //Get all
-        //[Authorize(Roles = "admin")]
-        //[HttpGet]
-        //public async Task<IEnumerable<Company>> GetCompanies()
-        //{
-        //    return await _context.Companies.ToListAsync();
-        //}
-
+        //get all
         [HttpGet]
         //[Authorize(Roles = "admin")]
         //[Authorize]
@@ -98,6 +91,32 @@ namespace Server.Controllers
             {
                 return company;
             }
+        }
+
+        //get active
+        [HttpGet("getactive")]
+        public async Task<IActionResult> GetCompaniesByStatus(string sortOrder = "asc")
+        {
+            // Set the default sort direction if not provided
+            if (sortOrder != "asc" && sortOrder != "desc")
+            {
+                sortOrder = "asc";
+            }
+
+            var companiesQuery = _context.Companies.AsQueryable();
+
+            if (sortOrder == "asc")
+            {
+                companiesQuery = companiesQuery.OrderBy(c => c.CompanyName);
+            }
+            else
+            {
+                companiesQuery = companiesQuery.OrderByDescending(c => c.CompanyName);
+            }
+
+            var companies = await companiesQuery.Where(c => c.Status == true).ToListAsync();
+
+            return Ok(companies);
         }
 
         //Search by name

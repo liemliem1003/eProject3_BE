@@ -44,16 +44,12 @@ namespace Server.Controllers
             {
                 var claims = new[]
                 {
+                    new System.Security.Claims.Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new System.Security.Claims.Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                     new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                     new System.Security.Claims.Claim(ClaimTypes.Name, user.Username),
                     new System.Security.Claims.Claim(ClaimTypes.Role, user.Role == 1 ? "admin" : "employee")
                 };
-                //var claims = new[]
-                //{
-                //    new System.Security.Claims.Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier", user.UserId.ToString()),
-                //    new System.Security.Claims.Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", user.Username),
-                //    new System.Security.Claims.Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", user.Role == 1 ? "admin" : "employee")
-                //};
 
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -68,7 +64,8 @@ namespace Server.Controllers
                 var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
                 // Return the token as part of the response
-                return Ok(new { Token = tokenString,
+                return Ok(new { 
+                    Token = tokenString,
                     User = new { 
                         user.UserId,
                         user.Username,
@@ -94,7 +91,7 @@ namespace Server.Controllers
         //Get all
         [HttpGet]
         //[Authorize(Roles = "admin")]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> GetUsers(int limit, int page, string sortOrder = "asc")
         {
             var token = HttpContext.Request.Headers["Authorization"];
