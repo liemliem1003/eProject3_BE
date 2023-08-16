@@ -135,7 +135,6 @@ namespace Server.Controllers
         }
 
         //get active
-        //get active
         [HttpGet("getactive")]
         public async Task<IActionResult> GetPoliciesByStatus(string sortOrder = "asc")
         {
