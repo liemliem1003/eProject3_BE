@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Server.Models;
@@ -32,7 +34,7 @@ namespace Server.Controllers
 
         //Get one
         [HttpGet("{id}")]
-        public async Task<ActionResult<Claim>> GetClaim(int id)
+        public async Task<ActionResult<Claim>> GetClaimByUser(int id, int limit, int page, string sortOrder = "asc")
         {
             var claim = await _context.Claims.FindAsync(id);
             if (claim == null)
@@ -44,6 +46,35 @@ namespace Server.Controllers
                 return claim;
             }
         }
+
+        //get claim by userid
+        [HttpGet("claimbyuser/{id}")]
+        public async Task<ActionResult<Claim>> GetClaim(int id, int limit, int page)
+        {
+            // Calculate skip count based on page and limit
+            int skip = (page - 1) * limit;
+
+            // Query data using Skip() and Take() methods to implement paging
+            var claimsQuery = _context.Claims.AsQueryable();
+
+            var claims = await claimsQuery.Where(c => c.UserId.Equals(id))
+                .Skip(skip)
+                .Take(limit)
+                .ToListAsync();
+
+            // Get the total count of items in the database
+            int totalCount = await _context.Policies.CountAsync();
+
+            // Create a response object containing the paginated data and total count
+            var response = new
+            {
+                TotalCount = totalCount,
+                Policies = claims
+            };
+
+            return Ok(response);
+        }
+
 
         //Create
         [HttpPost("create")]

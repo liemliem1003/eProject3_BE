@@ -8,6 +8,9 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Options;
 using Server.Swagger;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +22,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("http://localhost:4200").WithMethods("PUT", "DELETE", "GET", "POST").WithHeaders("Content-Type", "Authorization");
+                          policy.WithOrigins("http://localhost:4200", "http://192.168.0.100:3000").WithMethods("PUT", "DELETE", "GET", "POST").WithHeaders("Content-Type", "Authorization");
+                          
                       });
 });
 
