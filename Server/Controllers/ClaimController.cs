@@ -279,6 +279,8 @@ namespace Server.Controllers
                     string base64 = Convert.ToBase64String(imgarray);
                     string imgeurl = "data:image/png;base64, " + base64 + "";
                     string htmlcontent = "<div style='width:100%; text-align:center'>";
+                    //Console.WriteLine("Image URL: " + imgeurl); // If using Console.WriteLine
+
                     htmlcontent += "<img style='width:80px;height:80%' src='" + imgeurl + "'   />";
 
                     htmlcontent += "<h2>Welcome to " + company.CompanyName + " </h2>";
