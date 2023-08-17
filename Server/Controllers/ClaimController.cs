@@ -14,6 +14,7 @@ using PdfSharpCore;
 using PdfSharpCore.Pdf;
 using TheArtOfDev.HtmlRenderer.PdfSharp;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Server.Controllers
 {
@@ -23,10 +24,10 @@ namespace Server.Controllers
     {
         private readonly InsuranceContext _context; private readonly IWebHostEnvironment environment;
 
-        public ClaimController(InsuranceContext context, IWebHostEnvironment environment)
+        public ClaimController(InsuranceContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
-            this.environment = environment;
+            environment = webHostEnvironment;
         }
 
         //Claim API

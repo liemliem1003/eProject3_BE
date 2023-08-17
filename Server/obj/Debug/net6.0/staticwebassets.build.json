@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "3OBTqIvwTxjOTNZDFitDYbomn2Fpljg/arnEct3xB7o=",
+  "Hash": "gOiz3sTaWkd5IZMCLAxKTsMWtN8RSFvABo7tsQh88hU=",
   "Source": "Server",
   "BasePath": "_content/Server",
   "Mode": "Default",
@@ -100,6 +100,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\0db0fb35-940c-4ae2-ae7b-67ee4a486faf.png"
+    },
+    {
+      "Identity": "D:\\T1.2010.E0\\eProject3_BE\\Server\\wwwroot\\images\\1148340f-f3de-4a2e-89f1-0c46d8ff37d0.png",
+      "SourceId": "Server",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\T1.2010.E0\\eProject3_BE\\Server\\wwwroot\\",
+      "BasePath": "_content/Server",
+      "RelativePath": "images/1148340f-f3de-4a2e-89f1-0c46d8ff37d0.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\1148340f-f3de-4a2e-89f1-0c46d8ff37d0.png"
     },
     {
       "Identity": "D:\\T1.2010.E0\\eProject3_BE\\Server\\wwwroot\\images\\17ffd08f-5e36-4da8-af01-5b970593ae2b",
