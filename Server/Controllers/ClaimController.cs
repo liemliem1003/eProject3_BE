@@ -14,6 +14,7 @@ using PdfSharpCore;
 using PdfSharpCore.Pdf;
 using TheArtOfDev.HtmlRenderer.PdfSharp;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Server.Controllers
 {
@@ -23,10 +24,10 @@ namespace Server.Controllers
     {
         private readonly InsuranceContext _context; private readonly IWebHostEnvironment environment;
 
-        public ClaimController(InsuranceContext context, IWebHostEnvironment environment)
+        public ClaimController(InsuranceContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
-            this.environment = environment;
+            environment = webHostEnvironment;
         }
 
         //Claim API
@@ -278,6 +279,8 @@ namespace Server.Controllers
                     string base64 = Convert.ToBase64String(imgarray);
                     string imgeurl = "data:image/png;base64, " + base64 + "";
                     string htmlcontent = "<div style='width:100%; text-align:center'>";
+                    //Console.WriteLine("Image URL: " + imgeurl); // If using Console.WriteLine
+
                     htmlcontent += "<img style='width:80px;height:80%' src='" + imgeurl + "'   />";
 
                     htmlcontent += "<h2>Welcome to " + company.CompanyName + " </h2>";

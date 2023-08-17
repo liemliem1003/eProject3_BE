@@ -216,7 +216,8 @@ namespace Server.Controllers
                         Logo = "images/" + fileName, // Store the link to the image file
                         CompanyPhone = company.CompanyPhone,
                         Url = company.Url,
-                        Address = company.Address
+                        Address = company.Address,
+                        Status = company.Status,
                     };
 
                     _context.Companies.Add(newCompany);
