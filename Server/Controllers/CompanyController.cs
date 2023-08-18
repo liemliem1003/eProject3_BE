@@ -36,8 +36,8 @@ namespace Server.Controllers
         //[Authorize]
         public async Task<IActionResult> GetCompanies(int limit, int page, string sortOrder = "asc")
         {
-            var token = HttpContext.Request.Headers["Authorization"];
-            Console.WriteLine("Received Token: " + token);
+            //var token = HttpContext.Request.Headers["Authorization"];
+            //Console.WriteLine("Received Token: " + token);
             // Calculate skip count based on page and limit
             int skip = (page - 1) * limit;
 
@@ -121,21 +121,59 @@ namespace Server.Controllers
 
         //Search by name
         [HttpGet("search/{name}")]
-        public async Task<ActionResult<IEnumerable<Company>>> SearchCompany(string name)
+        public async Task<ActionResult<IEnumerable<Company>>> SearchCompany(string name, int limit, int page, string sortOrder = "asc")
         {
-            IQueryable<Company> query = _context.Companies;
+            //IQueryable<Company> query = _context.Companies;
 
-            if (!string.IsNullOrEmpty(name))
+            //if (!string.IsNullOrEmpty(name))
+            //{
+            //    query = query.Where(c => c.CompanyName.Contains(name));
+            //}
+
+            //var result = await query.ToListAsync();
+
+            //if (result.Any())
+            //{ 
+            //    return Ok(result);
+            //}else return NotFound();
+            int skip = (page - 1) * limit;
+
+            // Set the default sort direction if not provided
+            if (sortOrder != "asc" && sortOrder != "desc")
             {
-                query = query.Where(c => c.CompanyName.Contains(name));
+                sortOrder = "asc";
             }
 
-            var result = await query.ToListAsync();
+            // Query data using Skip() and Take() methods to implement paging   
+            var companiesQuery = _context.Companies.AsQueryable();
 
-            if (result.Any())
-            { 
-                return Ok(result);
-            }else return NotFound();
+            if (sortOrder == "asc")
+            {
+                companiesQuery = companiesQuery.OrderBy(c => c.CompanyName);
+            }
+            else
+            {
+                companiesQuery = companiesQuery.OrderByDescending(c => c.CompanyName);
+            }
+
+            var companies = await companiesQuery
+                .Where(c => c.CompanyName.Contains(name))
+                .Skip(skip)
+                .Take(limit)
+                .ToListAsync();
+
+            // Get the total count of items in the database
+            int totalCount = await _context.Companies.CountAsync();
+
+            // Create a response object containing the paginated data and total count
+            var response = new
+            {
+                TotalCount = totalCount,
+                Companies = companies,
+                SortOrder = sortOrder
+            };
+
+            return Ok(response);
         }
 
         //save on database as code64
@@ -217,7 +255,7 @@ namespace Server.Controllers
                         CompanyPhone = company.CompanyPhone,
                         Url = company.Url,
                         Address = company.Address,
-                        Status = company.Status,
+                        Status = company.Status,    
                     };
 
                     _context.Companies.Add(newCompany);
