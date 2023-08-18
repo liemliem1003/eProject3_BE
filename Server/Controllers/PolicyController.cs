@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Server.Models;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Data.SqlClient;
 
 namespace Server.Controllers
 {
@@ -162,22 +164,46 @@ namespace Server.Controllers
 
         //Search by name
         [HttpGet("search/{name}")]
-        public async Task<ActionResult<IEnumerable<Policy>>> SearchPolicy(string name)
+        public async Task<ActionResult<IEnumerable<Policy>>> SearchPolicy(string name, int limit, int page, string sortOrder = "asc")
         {
-            IQueryable<Policy> query = _context.Policies;
+            int skip = (page - 1) * limit;
 
-            if (!string.IsNullOrEmpty(name))
+            // Set the default sort direction if not provided
+            if (sortOrder != "asc" && sortOrder != "desc")
             {
-                query = query.Where(c => c.PolicyName.Contains(name));
+                sortOrder = "asc";
             }
 
-            var result = await query.ToListAsync();
+            // Query data using Skip() and Take() methods to implement paging   
+            var policiesQuery = _context.Companies.AsQueryable();
 
-            if (result.Any())
+            if (sortOrder == "asc")
             {
-                return Ok(result);
+                companiesQuery = companiesQuery.OrderBy(c => c.CompanyName);
             }
-            else return NotFound();
+            else
+            {
+                companiesQuery = companiesQuery.OrderByDescending(c => c.CompanyName);
+            }
+
+            var companies = await companiesQuery
+                .Where(c => c.CompanyName.Contains(name))
+                .Skip(skip)
+                .Take(limit)
+                .ToListAsync();
+
+            // Get the total count of items in the database
+            int totalCount = await _context.Companies.CountAsync();
+
+            // Create a response object containing the paginated data and total count
+            var response = new
+            {
+                TotalCount = totalCount,
+                Companies = companies,
+                SortOrder = sortOrder
+            };
+
+            return Ok(response);
         }
 
         //create
