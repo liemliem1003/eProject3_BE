@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Server.Models;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Server.Controllers
 {
@@ -27,9 +28,30 @@ namespace Server.Controllers
 
         //Get all
         [HttpGet]
-        public async Task<IEnumerable<PolicyOnUser>> GetPolicyOnUsers()
+        public async Task<IActionResult> GetPolicyOnUsers(int limit, int page)
         {
-            return await _context.PolicyOnUsers.ToListAsync();
+            // Calculate skip count based on page and limit
+            int skip = (page - 1) * limit;
+
+            // Query data using Skip() and Take() methods to implement paging
+            var policyonusersQuery = _context.PolicyOnUsers.AsQueryable();
+
+            var policyonusers = await policyonusersQuery
+                .Skip(skip)
+                .Take(limit)
+                .ToListAsync();
+
+            // Get the total count of items in the database
+            int totalCount = await _context.PolicyOnUsers.CountAsync();
+
+            // Create a response object containing the paginated data and total count
+            var response = new
+            {
+                TotalCount = totalCount,
+                PolicyOnUsers = policyonusers
+            };
+
+            return Ok(response);
         }
 
         //Get one

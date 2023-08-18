@@ -134,7 +134,6 @@ namespace Server.Controllers
                 sortOrder = "asc";
             }
 
-            // Query data using Skip() and Take() methods to implement paging   
             var claimsQuery = _context.Claims
                 .Include(c => c.User)
                 .Where(c => c.User.Name.Contains(name));
@@ -147,6 +146,7 @@ namespace Server.Controllers
             {
                 claimsQuery = claimsQuery.OrderByDescending(c => c.CreateDate);
             }
+
 
             var claims = await claimsQuery
                 .Skip(skip)
@@ -174,6 +174,8 @@ namespace Server.Controllers
 
             return Ok(jsonString);
         }
+
+
 
         //upload claim image
         [HttpPost("uploadimage")]
