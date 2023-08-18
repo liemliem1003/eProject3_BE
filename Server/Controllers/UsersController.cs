@@ -94,8 +94,6 @@ namespace Server.Controllers
         //[Authorize]
         public async Task<IActionResult> GetUsers(int limit, int page, string sortOrder = "asc")
         {
-            var token = HttpContext.Request.Headers["Authorization"];
-            Console.WriteLine("Received Token: " + token);
             // Calculate skip count based on page and limit
             int skip = (page - 1) * limit;
 
@@ -149,6 +147,52 @@ namespace Server.Controllers
             {
                 return employee;
             }
+        }
+
+        //Search by name
+        [HttpGet("search/{name}")]
+        public async Task<ActionResult<IEnumerable<User>>> SearchEmployee(string name, int limit, int page, string sortOrder = "asc")
+        {
+            int skip = (page - 1) * limit;
+
+            // Set the default sort direction if not provided
+            if (sortOrder != "asc" && sortOrder != "desc")
+            {
+                sortOrder = "asc";
+            }
+
+            // Query data using Skip() and Take() methods to implement paging   
+            var employeesQuery = _context.Users.AsQueryable();
+
+            if (sortOrder == "asc")
+            {
+                employeesQuery = employeesQuery.OrderBy(c => c.Name);
+            }
+            else
+            {
+                employeesQuery = employeesQuery.OrderByDescending(c => c.Name);
+            }
+
+            var employees = await employeesQuery
+                .Where(c => c.Name.Contains(name))
+                .Skip(skip)
+                .Take(limit)
+                .ToListAsync();
+
+            // Get the total count of items in the database
+            int totalCount = await employeesQuery
+                .Where(c => c.Name.Contains(name))
+                .CountAsync();
+
+            // Create a response object containing the paginated data and total count
+            var response = new
+            {
+                TotalCount = totalCount,
+                Employees = employees,
+                SortOrder = sortOrder
+            };
+
+            return Ok(response);
         }
 
         //create
