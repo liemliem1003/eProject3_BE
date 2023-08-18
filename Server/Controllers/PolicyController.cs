@@ -163,48 +163,50 @@ namespace Server.Controllers
         }
 
         //Search by name
-        //[HttpGet("search/{name}")]
-        //public async Task<ActionResult<IEnumerable<Policy>>> SearchPolicy(string name, int limit, int page, string sortOrder = "asc")
-        //{
-        //    int skip = (page - 1) * limit;
+        [HttpGet("search/{name}")]
+        public async Task<ActionResult<IEnumerable<Policy>>> SearchPolicy(string name, int limit, int page, string sortOrder = "asc")
+        {
+            int skip = (page - 1) * limit;
 
-        //    // Set the default sort direction if not provided
-        //    if (sortOrder != "asc" && sortOrder != "desc")
-        //    {
-        //        sortOrder = "asc";
-        //    }
+            // Set the default sort direction if not provided
+            if (sortOrder != "asc" && sortOrder != "desc")
+            {
+                sortOrder = "asc";
+            }
 
-        //    // Query data using Skip() and Take() methods to implement paging   
-        //    var policiesQuery = _context.Companies.AsQueryable();
+            // Query data using Skip() and Take() methods to implement paging   
+            var policiesQuery = _context.Policies.AsQueryable();
 
-        //    if (sortOrder == "asc")
-        //    {
-        //        companiesQuery = companiesQuery.OrderBy(c => c.CompanyName);
-        //    }
-        //    else
-        //    {
-        //        companiesQuery = companiesQuery.OrderByDescending(c => c.CompanyName);
-        //    }
+            if (sortOrder == "asc")
+            {
+                policiesQuery = policiesQuery.OrderBy(c => c.PolicyName);
+            }
+            else
+            {
+                policiesQuery = policiesQuery.OrderByDescending(c => c.PolicyName);
+            }
 
-        //    var companies = await companiesQuery
-        //        .Where(c => c.CompanyName.Contains(name))
-        //        .Skip(skip)
-        //        .Take(limit)
-        //        .ToListAsync();
+            var policies = await policiesQuery
+                .Where(c => c.PolicyName.Contains(name))
+                .Skip(skip)
+                .Take(limit)
+                .ToListAsync();
 
-        //    // Get the total count of items in the database
-        //    int totalCount = await _context.Companies.CountAsync();
+            // Get the total count of items in the database
+            int totalCount = await policiesQuery
+                .Where(c => c.PolicyName.Contains(name))
+                .CountAsync();
 
-        //    // Create a response object containing the paginated data and total count
-        //    var response = new
-        //    {
-        //        TotalCount = totalCount,
-        //        Companies = companies,
-        //        SortOrder = sortOrder
-        //    };
+            // Create a response object containing the paginated data and total count
+            var response = new
+            {
+                TotalCount = totalCount,
+                Policies = policies,
+                SortOrder = sortOrder
+            };
 
-        //    return Ok(response);
-        //}
+            return Ok(response);
+        }
 
         //create
         [HttpPost("create")]

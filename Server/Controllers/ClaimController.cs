@@ -15,6 +15,10 @@ using PdfSharpCore.Pdf;
 using TheArtOfDev.HtmlRenderer.PdfSharp;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting;
+using System.Security.Claims;
+using Claim = Server.Models.Claim;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace Server.Controllers
 {
@@ -116,6 +120,59 @@ namespace Server.Controllers
             {
                 return claimImage;
             }
+        }
+
+        //search by user name
+        [HttpGet("search/{name}")]
+        public async Task<ActionResult<IEnumerable<Claim>>> SearchClaim(string name, int limit, int page, string sortOrder = "asc")
+        {
+            int skip = (page - 1) * limit;
+
+            // Set the default sort direction if not provided
+            if (sortOrder != "asc" && sortOrder != "desc")
+            {
+                sortOrder = "asc";
+            }
+
+            // Query data using Skip() and Take() methods to implement paging   
+            var claimsQuery = _context.Claims
+                .Include(c => c.User)
+                .Where(c => c.User.Name.Contains(name));
+
+            if (sortOrder == "asc")
+            {
+                claimsQuery = claimsQuery.OrderBy(c => c.CreateDate);
+            }
+            else
+            {
+                claimsQuery = claimsQuery.OrderByDescending(c => c.CreateDate);
+            }
+
+            var claims = await claimsQuery
+                .Skip(skip)
+                .Take(limit)
+                .ToListAsync();
+
+            // Get the total count of items in the database
+            int totalCount = await claimsQuery
+                .CountAsync();
+
+            // Create a response object containing the paginated data and total count
+            var response = new
+            {
+                TotalCount = totalCount,
+                Claims = claims,
+                SortOrder = sortOrder
+            };
+
+            var options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve
+            };
+
+            var jsonString = System.Text.Json.JsonSerializer.Serialize(response, options);
+
+            return Ok(jsonString);
         }
 
         //upload claim image
