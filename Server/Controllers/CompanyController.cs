@@ -123,19 +123,6 @@ namespace Server.Controllers
         [HttpGet("search/{name}")]
         public async Task<ActionResult<IEnumerable<Company>>> SearchCompany(string name, int limit, int page, string sortOrder = "asc")
         {
-            //IQueryable<Company> query = _context.Companies;
-
-            //if (!string.IsNullOrEmpty(name))
-            //{
-            //    query = query.Where(c => c.CompanyName.Contains(name));
-            //}
-
-            //var result = await query.ToListAsync();
-
-            //if (result.Any())
-            //{ 
-            //    return Ok(result);
-            //}else return NotFound();
             int skip = (page - 1) * limit;
 
             // Set the default sort direction if not provided
@@ -163,7 +150,9 @@ namespace Server.Controllers
                 .ToListAsync();
 
             // Get the total count of items in the database
-            int totalCount = await _context.Companies.CountAsync();
+            int totalCount = await companiesQuery
+                .Where(c => c.CompanyName.Contains(name))
+                .CountAsync();
 
             // Create a response object containing the paginated data and total count
             var response = new
