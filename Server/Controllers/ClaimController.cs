@@ -38,13 +38,28 @@ namespace Server.Controllers
 
         //Get all
         [HttpGet]
-        public async Task<IActionResult> GetClaims(int limit, int page)
+        public async Task<IActionResult> GetClaims(int limit, int page, string sortOrder = "asc")
         {
             // Calculate skip count based on page and limit
             int skip = (page - 1) * limit;            
 
             // Query data using Skip() and Take() methods to implement paging
             var claimsQuery = _context.Claims.AsQueryable();
+
+            // Set the default sort direction if not provided
+            if (sortOrder != "asc" && sortOrder != "desc")
+            {
+                sortOrder = "asc";
+            }
+
+            if (sortOrder == "asc")
+            {
+                claimsQuery = claimsQuery.OrderBy(c => c.Status);
+            }
+            else
+            {
+                claimsQuery = claimsQuery.OrderByDescending(c => c.Status);
+            }
 
             var claims = await claimsQuery
                 .Skip(skip)
