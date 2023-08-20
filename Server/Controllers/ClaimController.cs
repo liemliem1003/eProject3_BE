@@ -175,7 +175,21 @@ namespace Server.Controllers
             return Ok(jsonString);
         }
 
-
+        //get image by claim id
+        [HttpGet("getimagebyclaimid")]
+        public async Task<ActionResult<ClaimImage>> GetImageByClaimId(int id)
+        {
+            var claimImage = await _context.ClaimImages
+                                .Where(c => c.ClaimId.Equals(id)).ToListAsync();
+            if (claimImage == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(claimImage);
+            }
+        }
 
         //upload claim image
         [HttpPost("uploadimage")]
