@@ -81,7 +81,7 @@ namespace Server.Controllers
 
         //get claim by userid
         [HttpGet("claimbyuser/{id}")]
-        public async Task<ActionResult<Claim>> GetClaim(int id, int limit, int page)
+        public async Task<ActionResult<Claim>> GetClaim(int id, int limit, int page)    
         {
             // Calculate skip count based on page and limit
             int skip = (page - 1) * limit;
@@ -95,7 +95,9 @@ namespace Server.Controllers
                 .ToListAsync();
 
             // Get the total count of items in the database
-            int totalCount = await _context.Claims.CountAsync();
+            int totalCount = await _context.Claims
+                .Where(c => c.UserId.Equals(id))
+                .CountAsync();
 
             // Create a response object containing the paginated data and total count
             var response = new

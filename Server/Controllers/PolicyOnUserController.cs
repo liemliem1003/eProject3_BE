@@ -85,7 +85,8 @@ namespace Server.Controllers
                 .ToListAsync();
 
             // Get the total count of items in the database
-            int totalCount = await _context.PolicyOnUsers.CountAsync();
+            int totalCount = await _context.PolicyOnUsers
+                .Where(c => c.UserId.Equals(id)).CountAsync();
 
             // Create a response object containing the paginated data and total count
             var response = new
